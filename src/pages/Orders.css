@@ -1,0 +1,150 @@
+.orders-page {
+    width: 100%;
+    padding: 2rem;
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    z-index: 1000;
+    animation: slideInNotification 0.3s ease-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+}
+
+@keyframes slideInNotification {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    color: black;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.orders-table {
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.orders-table {
+    background: #eee;
+    border-radius: 12px;
+    gap: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    color: #000;
+}
+
+.orders-table table {
+    width: 100%;
+}
+
+.orders-table table td {
+    color: #4a5568;
+}
+
+.orders-table table tr:nth-child(even) {
+    background: #f7fafc;
+}
+
+.orders-table table th,
+.orders-table table td {
+    padding: 12px;
+    text-align: left;
+}
+
+.orders-table table th {
+    font-weight: 600;
+}
+
+.orders-table table td {
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-select {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+tbody tr:hover {
+    background: #f7fafc;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-details {
+    padding: 0.5rem 1rem;
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-details:hover {
+    background-color: #764ba2;
+    transform: translateY(-1px);
+}
