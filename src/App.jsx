@@ -7,6 +7,7 @@ import Orders from './pages/Orders'
 import OrderDetails from './pages/OrderDetails'
 import Categories from './pages/Categories'
 import Login from './pages/Login'
+import Users from './pages/Users'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -102,6 +103,14 @@ function App() {
               element={
                 <AdminLayout>
                   <OrderDetails />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <AdminLayout>
+                  <Users />
                 </AdminLayout>
               }
             />
