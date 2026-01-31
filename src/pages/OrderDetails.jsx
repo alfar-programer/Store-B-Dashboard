@@ -25,10 +25,7 @@ const OrderDetails = () => {
 
     const fetchOrderDetails = async () => {
         try {
-            const token = localStorage.getItem('adminToken')
-            const response = await axios.get(`${API_URL}/api/orders`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            const response = await axios.get(`${API_URL}/api/orders`)
 
             if (response.data && response.data.success) {
                 const foundOrder = response.data.data.find(o => o.id === parseInt(id))
@@ -48,10 +45,7 @@ const OrderDetails = () => {
 
     const updateOrderStatus = async (newStatus) => {
         try {
-            const token = localStorage.getItem('adminToken')
-            await axios.put(`${API_URL}/api/orders/${id}`, { status: newStatus }, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            await axios.put(`${API_URL}/api/orders/${id}`, { status: newStatus })
             showNotification(`Order status updated to ${newStatus}`, 'success')
             fetchOrderDetails()
         } catch (error) {

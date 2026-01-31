@@ -26,10 +26,7 @@ const Categories = () => {
 
     const fetchCategories = async () => {
         try {
-            const token = localStorage.getItem('adminToken');
-            const response = await axios.get(`${API_URL}/api/categories`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            const response = await axios.get(`${API_URL}/api/categories`)
             setCategories(response.data)
         } catch (error) {
             console.error('Error fetching categories:', error)
@@ -97,11 +94,9 @@ const Categories = () => {
         }
 
         try {
-            const token = localStorage.getItem('adminToken');
             const config = {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'multipart/form-data'
                 }
             };
 
@@ -126,10 +121,7 @@ const Categories = () => {
         }
 
         try {
-            const token = localStorage.getItem('adminToken');
-            await axios.delete(`${API_URL}/api/categories/${id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            await axios.delete(`${API_URL}/api/categories/${id}`)
             fetchCategories()
         } catch (error) {
             setError(error.response?.data?.error || 'Failed to delete category')

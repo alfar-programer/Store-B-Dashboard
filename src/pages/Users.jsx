@@ -26,10 +26,7 @@ const Users = () => {
 
     const fetchUsers = async () => {
         try {
-            const token = localStorage.getItem('adminToken');
-            const response = await axios.get(`${API_URL}/api/users`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            const response = await axios.get(`${API_URL}/api/users`)
             if (response.data && response.data.success) {
                 setUsers(response.data.data)
             } else {
@@ -43,13 +40,7 @@ const Users = () => {
 
     const toggleBlockStatus = async (id, isBlocked) => {
         try {
-            const token = localStorage.getItem('adminToken');
-            // Toggle the status
-            const newStatus = !isBlocked;
-
-            await axios.put(`${API_URL}/api/users/${id}/block`, { isBlocked: newStatus }, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            await axios.put(`${API_URL}/api/users/${id}/block`, { isBlocked: newStatus })
 
             showNotification(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`, 'success')
             fetchUsers()

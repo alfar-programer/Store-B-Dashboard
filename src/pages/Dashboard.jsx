@@ -15,12 +15,9 @@ const Dashboard = () => {
     const fetchDashboardData = useCallback(async () => {
         try {
             const API_URL = import.meta.env.VITE_API_URL;
-            const token = localStorage.getItem('adminToken');
-            const config = { headers: { 'Authorization': `Bearer ${token}` } };
-
             const [statsRes, ordersRes] = await Promise.all([
-                axios.get(`${API_URL}/api/stats`, config),
-                axios.get(`${API_URL}/api/orders`, config)
+                axios.get(`${API_URL}/api/stats`),
+                axios.get(`${API_URL}/api/orders`)
             ])
             setStats(statsRes.data?.data || { products: 0, orders: 0, revenue: 0 })
             setRecentOrders(Array.isArray(ordersRes.data?.data) ? ordersRes.data.data.slice(0, 5) : [])

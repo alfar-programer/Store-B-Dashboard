@@ -15,9 +15,17 @@ const Sidebar = () => {
         { path: '/users', icon: Users, label: 'Users' }
     ]
 
-    const handleLogout = () => {
-        localStorage.removeItem('adminToken')
-        navigate('/login')
+    const handleLogout = async () => {
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
+            await axios.post(`${API_URL}/api/auth/logout`);
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('userRole');
+            navigate('/login');
+        }
     }
 
     return (

@@ -32,10 +32,7 @@ const Products = () => {
 
     const fetchProducts = async () => {
         try {
-            const token = localStorage.getItem('adminToken');
-            const response = await axios.get(`${API_URL}/api/products`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            const response = await axios.get(`${API_URL}/api/products`)
             setProducts(response.data)
             setLoading(false)
         } catch (error) {
@@ -47,10 +44,7 @@ const Products = () => {
 
     const fetchCategories = async () => {
         try {
-            const token = localStorage.getItem('adminToken');
-            const response = await axios.get(`${API_URL}/api/categories`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
+            const response = await axios.get(`${API_URL}/api/categories`)
             setCategories(response.data)
         } catch (error) {
             console.error('Error fetching categories:', error)
@@ -176,11 +170,9 @@ const Products = () => {
         })
 
         try {
-            const token = localStorage.getItem('adminToken');
             const config = {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'multipart/form-data'
                 }
             };
 
@@ -238,10 +230,7 @@ const Products = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
-                const token = localStorage.getItem('adminToken');
-                await axios.delete(`${API_URL}/api/products/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
+                await axios.delete(`${API_URL}/api/products/${id}`)
                 showNotification('Product deleted successfully!', 'success')
                 fetchProducts()
             } catch (error) {
