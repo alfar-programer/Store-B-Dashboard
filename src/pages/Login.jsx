@@ -45,9 +45,11 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const API_URL = import.meta.env.VITE_API_URL;
+        const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
 
         try {
+            // Using raw fetch here to keep it simple or we can use our api instance
+            // But let's ensure we use the correct URL
             const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
