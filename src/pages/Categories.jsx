@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api'
 import { Plus, Edit2, Trash2, X, Upload } from 'lucide-react'
 import './Categories.css'
 
@@ -16,17 +16,13 @@ const Categories = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
-    // API URL - Uses environment variable
-    // API URL - Uses environment variable in dev, falls back to production URL
-    const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
-
     useEffect(() => {
         fetchCategories()
     }, [])
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/categories`)
+            const response = await api.get('/api/categories')
             setCategories(response.data)
         } catch (error) {
             console.error('Error fetching categories:', error)
@@ -101,9 +97,9 @@ const Categories = () => {
             };
 
             if (editingCategory) {
-                await axios.put(`${API_URL}/api/categories/${editingCategory.id}`, data, config)
+                await api.put(`/api/categories/${editingCategory.id}`, data, config)
             } else {
-                await axios.post(`${API_URL}/api/categories`, data, config)
+                await api.post('/api/categories', data, config)
             }
 
             fetchCategories()
@@ -121,7 +117,7 @@ const Categories = () => {
         }
 
         try {
-            await axios.delete(`${API_URL}/api/categories/${id}`)
+            await api.delete(`/api/categories/${id}`)
             fetchCategories()
         } catch (error) {
             setError(error.response?.data?.error || 'Failed to delete category')
@@ -135,10 +131,10 @@ const Categories = () => {
             description: category.description || '',
             image: null
         })
-        // If image is an absolute URL (Cloudinary), use it directly. Otherwise prepend API_URL.
+        // If image is an absolute URL (Cloudinary), use it directly.
         const imageUrl = category.image?.startsWith('http')
             ? category.image
-            : (category.image ? `${API_URL}/${category.image}` : null);
+            : null;
 
         setImagePreview(imageUrl)
         setShowModal(true)
@@ -169,7 +165,7 @@ const Categories = () => {
                     <div key={category.id} className="category-card">
                         {category.image && (
                             <div className="category-image">
-                                <img src={category.image.startsWith('http') ? category.image : `${API_URL}/${category.image}`} alt={category.name} />
+                                <img src={category.image} alt={category.name} />
                             </div>
                         )}
                         <div className="category-content">

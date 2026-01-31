@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import axios from 'axios'
+import api from '../api'
 import { TrendingUp, Package, ShoppingCart, DollarSign, Clock, CheckCircle } from 'lucide-react'
 import './Dashboard.css'
 
@@ -14,10 +14,9 @@ const Dashboard = () => {
 
     const fetchDashboardData = useCallback(async () => {
         try {
-            const API_URL = import.meta.env.VITE_API_URL;
             const [statsRes, ordersRes] = await Promise.all([
-                axios.get(`${API_URL}/api/stats`),
-                axios.get(`${API_URL}/api/orders`)
+                api.get('/api/stats'),
+                api.get('/api/orders')
             ])
             setStats(statsRes.data?.data || { products: 0, orders: 0, revenue: 0 })
             setRecentOrders(Array.isArray(ordersRes.data?.data) ? ordersRes.data.data.slice(0, 5) : [])

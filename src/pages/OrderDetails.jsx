@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 import { ArrowLeft, Package, User, MapPin, Phone, Mail, Clock, Check, X } from 'lucide-react'
 import './OrderDetails.css'
 
 const OrderDetails = () => {
     const { id } = useParams()
     const navigate = useNavigate()
-    const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app'
 
     const [order, setOrder] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -25,7 +24,7 @@ const OrderDetails = () => {
 
     const fetchOrderDetails = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/orders`)
+            const response = await api.get('/api/orders')
 
             if (response.data && response.data.success) {
                 const foundOrder = response.data.data.find(o => o.id === parseInt(id))
@@ -45,7 +44,7 @@ const OrderDetails = () => {
 
     const updateOrderStatus = async (newStatus) => {
         try {
-            await axios.put(`${API_URL}/api/orders/${id}`, { status: newStatus })
+            await api.put(`/api/orders/${id}`, { status: newStatus })
             showNotification(`Order status updated to ${newStatus}`, 'success')
             fetchOrderDetails()
         } catch (error) {

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 import { X, Check } from 'lucide-react'
 import './Orders.css'
 
 const Orders = () => {
-    // API URL - Uses environment variable in dev, falls back to production URL
-    const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
     const [orders, setOrders] = useState([])
     const [notification, setNotification] = useState({ show: false, message: '', type: '' })
     const navigate = useNavigate()
@@ -24,7 +22,7 @@ const Orders = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/orders`)
+            const response = await api.get('/api/orders')
             if (response.data && response.data.success) {
                 setOrders(response.data.data)
             } else if (Array.isArray(response.data)) {
@@ -40,7 +38,7 @@ const Orders = () => {
 
     const updateOrderStatus = async (id, newStatus) => {
         try {
-            await axios.put(`${API_URL}/api/orders/${id}`, { status: newStatus })
+            await api.put(`/api/orders/${id}`, { status: newStatus })
             showNotification(`Order status updated to ${newStatus}`, 'success')
             fetchOrders()
         } catch (error) {

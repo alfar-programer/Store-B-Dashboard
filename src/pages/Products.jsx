@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api'
 import { Package, Upload, Edit, Trash2, X, Check } from 'lucide-react'
 import './Products.css'
 
 const Products = () => {
-    // API URL - Uses environment variable in dev, falls back to production URL
-    const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
@@ -32,7 +30,7 @@ const Products = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/products`)
+            const response = await api.get('/api/products')
             setProducts(response.data)
             setLoading(false)
         } catch (error) {
@@ -44,7 +42,7 @@ const Products = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/categories`)
+            const response = await api.get('/api/categories')
             setCategories(response.data)
         } catch (error) {
             console.error('Error fetching categories:', error)
@@ -183,10 +181,10 @@ const Products = () => {
             });
 
             if (editingProduct) {
-                await axios.put(`${API_URL}/api/products/${editingProduct.id}`, data, config)
+                await api.put(`/api/products/${editingProduct.id}`, data, config)
                 showNotification('Product updated successfully!', 'success')
             } else {
-                await axios.post(`${API_URL}/api/products`, data, config)
+                await api.post('/api/products', data, config)
                 showNotification('Product created successfully!', 'success')
             }
 
@@ -230,7 +228,7 @@ const Products = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
-                await axios.delete(`${API_URL}/api/products/${id}`)
+                await api.delete(`/api/products/${id}`)
                 showNotification('Product deleted successfully!', 'success')
                 fetchProducts()
             } catch (error) {

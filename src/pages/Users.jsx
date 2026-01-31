@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api'
 import { X, Check, Shield, User as UserIcon, Ban, Unlock } from 'lucide-react'
 import './Users.css'
 
 const Users = () => {
-    // API URL - Uses environment variable in dev, falls back to production URL
-    const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
     const [users, setUsers] = useState([])
     const [notification, setNotification] = useState({ show: false, message: '', type: '' })
-
-    // Get current user ID from local storage or token to prevent self-blocking
-    // Ideally we decode the token, but for now we'll handle the error from backend
-    // or decode it here if needed.
 
     const showNotification = (message, type) => {
         setNotification({ show: true, message, type })
@@ -26,7 +20,7 @@ const Users = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/users`)
+            const response = await api.get('/api/users')
             if (response.data && response.data.success) {
                 setUsers(response.data.data)
             } else {
@@ -38,9 +32,10 @@ const Users = () => {
         }
     }
 
-    const toggleBlockStatus = async (id, isBlocked) => {
+    const toggleBlockStatus = async (id, currentIsBlocked) => {
         try {
-            await axios.put(`${API_URL}/api/users/${id}/block`, { isBlocked: newStatus })
+            const newStatus = !currentIsBlocked;
+            await api.put(`/api/users/${id}/block`, { isBlocked: newStatus })
 
             showNotification(`User ${newStatus ? 'blocked' : 'unblocked'} successfully`, 'success')
             fetchUsers()
