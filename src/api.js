@@ -13,12 +13,21 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('adminToken');
+
+        console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            // Ensure headers object exists
+            config.headers = config.headers || {};
+            config.headers['Authorization'] = `Bearer ${token}`;
+            console.log('✅ Token attached to request');
+        } else {
+            console.warn('⚠️ No adminToken found in localStorage for this request');
         }
         return config;
     },
     (error) => {
+        console.error('❌ Request Interceptor Error:', error);
         return Promise.reject(error);
     }
 );

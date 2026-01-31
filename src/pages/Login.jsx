@@ -65,6 +65,8 @@ const Login = () => {
                 // successful login
                 localStorage.setItem('adminToken', data.token); // Keeping same key for simplicity, or could rename
                 localStorage.setItem('userRole', data.role);
+                console.log('✅ Login successful, token and role stored in localStorage');
+                console.log('Token starts with:', data.token.substring(0, 10));
 
                 if (data.role === 'admin') {
                     navigate('/');
