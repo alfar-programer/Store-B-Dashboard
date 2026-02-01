@@ -98,7 +98,7 @@ const Orders = () => {
                             <tr key={order.id}>
                                 <td>#{order.id}</td>
                                 <td>{order.customerName}</td>
-                                <td>${(Number(order.total) || 0).toFixed(2)}</td>
+                                <td>{(Number(order.total) || 0).toFixed(2)} <small>EGP</small></td>
                                 <td>
                                     <span
                                         className="status-badge"

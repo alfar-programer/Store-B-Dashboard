@@ -522,7 +522,7 @@ const Products = () => {
                                         </td>
                                         <td className="product-title">{product.title}</td>
                                         <td>{product.category}</td>
-                                        <td className="product-price">${parseFloat(product.price).toFixed(2)}</td>
+                                        <td className="product-price">{parseFloat(product.price).toFixed(2)} <small>EGP</small></td>
                                         <td>{product.stock}</td>
                                         <td>{product.discount}%</td>
                                         <td>

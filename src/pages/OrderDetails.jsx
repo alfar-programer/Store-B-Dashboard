@@ -136,15 +136,15 @@ const OrderDetails = () => {
                                         <p className="item-qty-text">Quantity: {item.quantity}</p>
                                     </div>
                                     <div className="item-pricing">
-                                        <p className="price-bold">${(item.price * item.quantity).toFixed(2)}</p>
-                                        <small className="price-unit">${item.price} each</small>
+                                        <p className="price-bold">{(item.price * item.quantity).toFixed(2)} <small>EGP</small></p>
+                                        <small className="price-unit">{item.price} EGP each</small>
                                     </div>
                                 </div>
                             ))}
                         </div>
                         <div className="order-summary-row">
                             <span>Total Amount</span>
-                            <span className="summary-total-value">${Number(order.total).toFixed(2)}</span>
+                            <span className="summary-total-value">{Number(order.total).toFixed(2)} <small>EGP</small></span>
                         </div>
                     </div>
                 </div>
