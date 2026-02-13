@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Get API URL from environment variables
-const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL || 'https://store-b-backend-production-2198.up.railway.app';
 
 // Create an axios instance
 const api = axios.create({
