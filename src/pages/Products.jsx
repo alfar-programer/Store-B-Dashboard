@@ -31,7 +31,12 @@ const Products = () => {
     const fetchProducts = async () => {
         try {
             const response = await api.get('/api/products')
-            setProducts(response.data)
+            // Backend returns paginated: { success, data: [...], pagination: {...} }
+            // Axios wraps this in response.data, so the array is at response.data.data
+            const productsArray = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.data ?? [])
+            setProducts(productsArray)
             setLoading(false)
         } catch (error) {
             console.error('Error fetching products:', error)
@@ -43,7 +48,11 @@ const Products = () => {
     const fetchCategories = async () => {
         try {
             const response = await api.get('/api/categories')
-            setCategories(response.data)
+            // Categories returns a plain array directly
+            const categoriesArray = Array.isArray(response.data)
+                ? response.data
+                : (response.data?.data ?? [])
+            setCategories(categoriesArray)
         } catch (error) {
             console.error('Error fetching categories:', error)
         }
