@@ -7,6 +7,7 @@ const Products = () => {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
+    const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 1 })
     const [showForm, setShowForm] = useState(false)
     const [editingProduct, setEditingProduct] = useState(null)
     const [imagePreviews, setImagePreviews] = useState([])
@@ -28,15 +29,18 @@ const Products = () => {
         fetchCategories()
     }, [])
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 1) => {
         try {
-            const response = await api.get('/api/products')
+            const response = await api.get(`/api/products?page=${page}`)
             // Backend returns paginated: { success, data: [...], pagination: {...} }
             // Axios wraps this in response.data, so the array is at response.data.data
             const productsArray = Array.isArray(response.data)
                 ? response.data
                 : (response.data?.data ?? [])
             setProducts(productsArray)
+            if (response.data?.pagination) {
+                setPagination(response.data.pagination)
+            }
             setLoading(false)
         } catch (error) {
             console.error('Error fetching products:', error)
@@ -192,12 +196,13 @@ const Products = () => {
             if (editingProduct) {
                 await api.put(`/api/products/${editingProduct.id}`, data, config)
                 showNotification('Product updated successfully!', 'success')
+                fetchProducts(pagination.page)
             } else {
                 await api.post('/api/products', data, config)
                 showNotification('Product created successfully!', 'success')
+                fetchProducts(1) // Go to first page on new product creation
             }
 
-            fetchProducts()
             resetForm()
         } catch (error) {
             console.error('Error saving product:', error)
@@ -239,7 +244,7 @@ const Products = () => {
             try {
                 await api.delete(`/api/products/${id}`)
                 showNotification('Product deleted successfully!', 'success')
-                fetchProducts()
+                fetchProducts(pagination.page)
             } catch (error) {
                 console.error('Error deleting product:', error)
                 showNotification('Error deleting product', 'error')
@@ -497,7 +502,7 @@ const Products = () => {
 
             {/* Products List */}
             <div className="products-list">
-                <h2>All Products ({products.length})</h2>
+                <h2>All Products ({pagination.total || products.length})</h2>
                 {products.length === 0 ? (
                     <div className="empty-state">
                         <Package size={64} />
@@ -566,6 +571,47 @@ const Products = () => {
                                 ))}
                             </tbody>
                         </table>
+
+                        {/* Pagination Controls */}
+                        {pagination.pages > 1 && (
+                            <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px', padding: '20px 0' }}>
+                                <button 
+                                    onClick={() => fetchProducts(pagination.page - 1)}
+                                    disabled={pagination.page <= 1}
+                                    style={{ 
+                                        padding: '8px 16px', 
+                                        borderRadius: '6px', 
+                                        background: pagination.page <= 1 ? '#e2e8f0' : '#4f46e5', 
+                                        color: pagination.page <= 1 ? '#a0aec0' : 'white', 
+                                        border: 'none', 
+                                        cursor: pagination.page <= 1 ? 'not-allowed' : 'pointer',
+                                        fontWeight: '500',
+                                        transition: 'background 0.2s'
+                                    }}
+                                >
+                                    Previous
+                                </button>
+                                <span style={{ display: 'flex', alignItems: 'center', fontWeight: '500', color: '#4a5568' }}>
+                                    Page {pagination.page} of {pagination.pages}
+                                </span>
+                                <button 
+                                    onClick={() => fetchProducts(pagination.page + 1)}
+                                    disabled={pagination.page >= pagination.pages}
+                                    style={{ 
+                                        padding: '8px 16px', 
+                                        borderRadius: '6px', 
+                                        background: pagination.page >= pagination.pages ? '#e2e8f0' : '#4f46e5', 
+                                        color: pagination.page >= pagination.pages ? '#a0aec0' : 'white', 
+                                        border: 'none', 
+                                        cursor: pagination.page >= pagination.pages ? 'not-allowed' : 'pointer',
+                                        fontWeight: '500',
+                                        transition: 'background 0.2s'
+                                    }}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
