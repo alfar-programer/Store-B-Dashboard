@@ -20,7 +20,9 @@ const Products = () => {
         discount: 0,
         rating: 4.5,
         images: [],
-        isFeatured: false
+        isFeatured: false,
+        pinned: '',
+        excluded: ''
     })
     const [notification, setNotification] = useState({ show: false, message: '', type: '' })
 
@@ -145,7 +147,9 @@ const Products = () => {
             discount: 0,
             rating: 4.5,
             images: [],
-            isFeatured: false
+            isFeatured: false,
+            pinned: '',
+            excluded: ''
         })
         setImagePreviews([])
         setEditingProduct(null)
@@ -193,14 +197,37 @@ const Products = () => {
                 isEditing: !!editingProduct
             });
 
+            let productId = editingProduct ? editingProduct.id : null;
+
             if (editingProduct) {
                 await api.put(`/api/products/${editingProduct.id}`, data, config)
                 showNotification('Product updated successfully!', 'success')
                 fetchProducts(pagination.page)
             } else {
-                await api.post('/api/products', data, config)
+                const res = await api.post('/api/products', data, config)
+                productId = res.data?.data?.id || res.data?.id || null;
                 showNotification('Product created successfully!', 'success')
                 fetchProducts(1) // Go to first page on new product creation
+            }
+
+            // After product save, save recommendations pinning
+            console.log('📦 Recommendations form data:', { pinned: formData.pinned, excluded: formData.excluded, productId });
+            if (productId && (formData.pinned.trim() !== '' || formData.excluded.trim() !== '')) {
+                const pinnedIds = formData.pinned.split(',').map(s=>parseInt(s.trim())).filter(x=>!isNaN(x));
+                const excludedIds = formData.excluded.split(',').map(s=>parseInt(s.trim())).filter(x=>!isNaN(x));
+                
+                console.log('📌 Sending Recommendation Update:', { productId, pinnedIds, excludedIds });
+                try {
+                    const recRes = await api.put(`/api/admin/products/${productId}/recommendations`, {
+                        pinned: pinnedIds,
+                        excluded: excludedIds
+                    });
+                    console.log('✅ Recommendation Update Response:', recRes.data);
+                    showNotification('Product and recommendations saved!', 'success');
+                } catch (recErr) {
+                    console.error('❌ Failed to update recommendations', recErr);
+                    showNotification('Product saved, but failed to update recommendations: ' + (recErr.response?.data?.message || recErr.message), 'error');
+                }
             }
 
             resetForm()
@@ -211,7 +238,7 @@ const Products = () => {
         }
     }
 
-    const handleEdit = (product) => {
+    const handleEdit = async (product) => {
         setEditingProduct(product)
         const parsedImages = getProductImages(product.image);
 
@@ -224,10 +251,22 @@ const Products = () => {
             discount: product.discount,
             rating: product.rating,
             images: [], // We start empty for files. Ideally store existing URLs separately.
-            isFeatured: product.isFeatured || false
+            isFeatured: product.isFeatured || false,
+            pinned: '',
+            excluded: ''
         })
         setImagePreviews(parsedImages)
         setShowForm(true)
+
+        // Fetch current recommendations status for the form
+        try {
+            const recRes = await api.get(`/api/products/${product.id}/recommendations`);
+            // The backend responds with recommendations, if we can parse pinned/excluded we can populate them
+            // Or alternatively we just allow writing to it. For now, fetching them is slightly indirect since the endpoint returns joined products.
+            // Let's rely on the admin to just overwrite or input what they want.
+        } catch (e) {
+            console.error('Failed to fetch recommendations', e);
+        }
     }
 
     const getProductImages = (imageString) => {
@@ -252,6 +291,18 @@ const Products = () => {
         }
     }
 
+    const handleRunCron = async () => {
+        try {
+            showNotification('Running recommendation cron job...', 'success');
+            const res = await api.post('/api/admin/recommendations/run');
+            console.log('Cron result:', res.data);
+            showNotification('Recommendation cron job completed!', 'success');
+        } catch (error) {
+            console.error('Cron error:', error);
+            showNotification('Error running cron: ' + (error.response?.data?.message || error.message), 'error');
+        }
+    };
+
     if (loading) {
         return <div className="products-loading">Loading products...</div>
     }
@@ -272,13 +323,22 @@ const Products = () => {
                     <h1>Products Management</h1>
                     <p>Manage your product inventory</p>
                 </div>
-                <button
-                    className="add-product-btn"
-                    onClick={() => setShowForm(!showForm)}
-                >
-                    <Package size={20} />
-                    {showForm ? 'Cancel' : 'Add Product'}
-                </button>
+                <div style={{display: 'flex', gap: '10px'}}>
+                    <button
+                        className="add-product-btn"
+                        onClick={handleRunCron}
+                        style={{background: '#38a169'}}
+                    >
+                        🔄 Run Recommendations
+                    </button>
+                    <button
+                        className="add-product-btn"
+                        onClick={() => setShowForm(!showForm)}
+                    >
+                        <Package size={20} />
+                        {showForm ? 'Cancel' : 'Add Product'}
+                    </button>
+                </div>
             </div>
 
             {/* Product Form */}
@@ -378,6 +438,30 @@ const Products = () => {
                                     />
                                     <span>⭐ Featured Product (Show on home page)</span>
                                 </label>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Pinned Recommend IDs</label>
+                                <input
+                                    type="text"
+                                    name="pinned"
+                                    value={formData.pinned}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g. 102, 105"
+                                />
+                                <small style={{fontSize: '10px', color: '#718096'}}>Comma-separated Product IDs</small>
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Exclude Recommend IDs</label>
+                                <input
+                                    type="text"
+                                    name="excluded"
+                                    value={formData.excluded}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g. 103"
+                                />
+                                <small style={{fontSize: '10px', color: '#718096'}}>Comma-separated Product IDs</small>
                             </div>
                         </div>
 

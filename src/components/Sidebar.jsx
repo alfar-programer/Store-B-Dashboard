@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Package, ShoppingCart, FolderOpen, LogOut, Users } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, FolderOpen, LogOut, Users, Star } from 'lucide-react'
 import './Sidebar.css'
 
 const Sidebar = () => {
@@ -12,7 +12,8 @@ const Sidebar = () => {
         { path: '/products', icon: Package, label: 'Products' },
         { path: '/categories', icon: FolderOpen, label: 'Categories' },
         { path: '/orders', icon: ShoppingCart, label: 'Orders' },
-        { path: '/users', icon: Users, label: 'Users' }
+        { path: '/users', icon: Users, label: 'Users' },
+        { path: '/reviews', icon: Star, label: 'Reviews' }
     ]
 
     const handleLogout = async () => {

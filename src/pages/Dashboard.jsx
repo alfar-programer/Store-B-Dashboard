@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from '../api'
-import { TrendingUp, Package, ShoppingCart, DollarSign, Clock, CheckCircle } from 'lucide-react'
+import { TrendingUp, Package, ShoppingCart, DollarSign, Clock, CheckCircle, Star } from 'lucide-react'
 import './Dashboard.css'
 
 const Dashboard = () => {
     const [stats, setStats] = useState({ products: 0, orders: 0, revenue: 0 })
     const [recentOrders, setRecentOrders] = useState([])
+    const [pendingReviews, setPendingReviews] = useState(0)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -14,12 +15,14 @@ const Dashboard = () => {
 
     const fetchDashboardData = useCallback(async () => {
         try {
-            const [statsRes, ordersRes] = await Promise.all([
+            const [statsRes, ordersRes, reviewsRes] = await Promise.all([
                 api.get('/api/stats'),
-                api.get('/api/orders')
+                api.get('/api/orders'),
+                api.get('/api/admin/reviews?status=pending').catch(() => ({data: {data: []}}))
             ])
             setStats(statsRes.data?.data || { products: 0, orders: 0, revenue: 0 })
             setRecentOrders(Array.isArray(ordersRes.data?.data) ? ordersRes.data.data.slice(0, 5) : [])
+            setPendingReviews(reviewsRes.data?.data?.length || 0)
             setLoading(false)
         } catch (error) {
             console.error('Error fetching dashboard data:', error)
@@ -187,6 +190,15 @@ const Dashboard = () => {
                         <h4>Completed Today</h4>
                         <p className="quick-stat-value">
                             {recentOrders.filter(o => o.status === 'Delivered').length}
+                        </p>
+                    </div>
+                </div>
+                <div className="quick-stat-card">
+                    <Star size={32} color="#f5b223" />
+                    <div>
+                        <h4>Pending Reviews</h4>
+                        <p className="quick-stat-value">
+                            {pendingReviews}
                         </p>
                     </div>
                 </div>

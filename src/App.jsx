@@ -8,6 +8,7 @@ import OrderDetails from './pages/OrderDetails'
 import Categories from './pages/Categories'
 import Login from './pages/Login'
 import Users from './pages/Users'
+import Reviews from './pages/Reviews'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -111,6 +112,14 @@ function App() {
               element={
                 <AdminLayout>
                   <Users />
+                </AdminLayout>
+              }
+            />
+            <Route
+              path="/reviews"
+              element={
+                <AdminLayout>
+                  <Reviews />
                 </AdminLayout>
               }
             />
