@@ -13,7 +13,9 @@ const Products = () => {
     const [imagePreviews, setImagePreviews] = useState([])
     const [formData, setFormData] = useState({
         title: '',
+        title_ar: '',
         description: '',
+        description_ar: '',
         price: '',
         stock: '',
         category: '',
@@ -140,7 +142,9 @@ const Products = () => {
     const resetForm = () => {
         setFormData({
             title: '',
+            title_ar: '',
             description: '',
+            description_ar: '',
             price: '',
             stock: '',
             category: '',
@@ -166,6 +170,9 @@ const Products = () => {
 
         const data = new FormData()
         data.append('title', formData.title)
+        // Arabic fields (optional — only send if not empty)
+        if (formData.title_ar?.trim()) data.append('title_ar', formData.title_ar)
+        if (formData.description_ar?.trim()) data.append('description_ar', formData.description_ar)
         data.append('description', formData.description)
         data.append('price', formData.price)
         data.append('stock', formData.stock)
@@ -244,7 +251,9 @@ const Products = () => {
 
         setFormData({
             title: product.title,
+            title_ar: product.title_ar || '',
             description: product.description,
+            description_ar: product.description_ar || '',
             price: product.price,
             stock: product.stock,
             category: product.category,
@@ -347,17 +356,20 @@ const Products = () => {
                     <h2>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                     <form onSubmit={handleSubmit} className="product-form">
                         <div className="form-grid">
-                            <div className="form-group">
-                                <label>Title *</label>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleInputChange}
-                                    required
-                                    placeholder="Product title"
-                                />
-                            </div>
+                        <div className="form-group full-width" style={{ gridColumn: '1 / -1', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px', marginBottom: '10px' }}>
+                            <h3 style={{ fontSize: '1.1rem', color: '#2d3748', margin: 0 }}>English Content</h3>
+                        </div>
+                        <div className="form-group">
+                            <label>Title (English) *</label>
+                            <input
+                                type="text"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleInputChange}
+                                required
+                                placeholder="Product title in English"
+                            />
+                        </div>
 
                             <div className="form-group">
                                 <label>Category *</label>
@@ -466,14 +478,42 @@ const Products = () => {
                         </div>
 
                         <div className="form-group full-width">
-                            <label>Description *</label>
+                            <label>Description (English) *</label>
                             <textarea
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 required
                                 rows="4"
-                                placeholder="Product description"
+                                placeholder="Product description in English"
+                            />
+                        </div>
+
+                        <div className="form-group full-width" style={{ gridColumn: '1 / -1', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px', marginBottom: '10px', marginTop: '20px' }}>
+                            <h3 style={{ fontSize: '1.1rem', color: '#2d3748', margin: 0 }}>Arabic Content (Optional)</h3>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Title (Arabic)</label>
+                            <input
+                                type="text"
+                                name="title_ar"
+                                value={formData.title_ar}
+                                onChange={handleInputChange}
+                                dir="rtl"
+                                placeholder="عنوان المنتج بالعربية"
+                            />
+                        </div>
+
+                        <div className="form-group full-width">
+                            <label>Description (Arabic)</label>
+                            <textarea
+                                name="description_ar"
+                                value={formData.description_ar}
+                                onChange={handleInputChange}
+                                rows="4"
+                                dir="rtl"
+                                placeholder="وصف المنتج بالعربية"
                             />
                         </div>
 

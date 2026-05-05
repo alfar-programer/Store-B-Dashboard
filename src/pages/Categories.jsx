@@ -10,7 +10,9 @@ const Categories = () => {
     const [imagePreview, setImagePreview] = useState(null)
     const [formData, setFormData] = useState({
         name: '',
+        name_ar: '',
         description: '',
+        description_ar: '',
         image: null
     })
     const [loading, setLoading] = useState(false)
@@ -83,7 +85,9 @@ const Categories = () => {
 
         const data = new FormData()
         data.append('name', formData.name)
+        if (formData.name_ar?.trim()) data.append('name_ar', formData.name_ar)
         data.append('description', formData.description)
+        if (formData.description_ar?.trim()) data.append('description_ar', formData.description_ar)
 
         if (formData.image) {
             data.append('image', formData.image)
@@ -128,7 +132,9 @@ const Categories = () => {
         setEditingCategory(category)
         setFormData({
             name: category.name,
+            name_ar: category.name_ar || '',
             description: category.description || '',
+            description_ar: category.description_ar || '',
             image: null
         })
         // If image is an absolute URL (Cloudinary), use it directly.
@@ -143,7 +149,7 @@ const Categories = () => {
     const handleCloseModal = () => {
         setShowModal(false)
         setEditingCategory(null)
-        setFormData({ name: '', description: '', image: null })
+        setFormData({ name: '', name_ar: '', description: '', description_ar: '', image: null })
         setImagePreview(null)
         setError('')
     }
@@ -209,8 +215,11 @@ const Categories = () => {
                         </div>
 
                         <form onSubmit={handleSubmit}>
+                            <div className="form-group full-width" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '10px', marginBottom: '10px' }}>
+                                <h3 style={{ fontSize: '1.1rem', color: '#2d3748', margin: 0 }}>English Content</h3>
+                            </div>
                             <div className="form-group">
-                                <label>Category Name *</label>
+                                <label>Category Name (English) *</label>
                                 <input
                                     type="text"
                                     value={formData.name}
@@ -221,12 +230,38 @@ const Categories = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>Description</label>
+                                <label>Description (English)</label>
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Optional description for this category"
                                     rows="3"
+                                />
+                            </div>
+
+                            <div className="form-group full-width" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '10px', marginBottom: '10px', marginTop: '20px' }}>
+                                <h3 style={{ fontSize: '1.1rem', color: '#2d3748', margin: 0 }}>Arabic Content (Optional)</h3>
+                            </div>
+
+                            <div className="form-group">
+                                <label>اسم الفئة (Category Name in Arabic)</label>
+                                <input
+                                    type="text"
+                                    value={formData.name_ar}
+                                    onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                                    dir="rtl"
+                                    placeholder="اسم الفئة بالعربية"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>الوصف بالعربي (Description in Arabic)</label>
+                                <textarea
+                                    value={formData.description_ar}
+                                    onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
+                                    placeholder="وصف الفئة بالعربية"
+                                    rows="3"
+                                    dir="rtl"
                                 />
                             </div>
 
